@@ -1,2 +1,1 @@
-# SS
-Assign3
+creating a Pipeline for my bacherlor thesis. 
