@@ -1,1 +1,0 @@
-alert('The Legend of Zelda: Ocarina of Time is the best game ever!')

@@ -1,0 +1,34 @@
+name: SonarCloud Analysis for Vulnerable Test Repos
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Analyze all projects with SonarCloud
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          for dir in VulnerableTestRepos/*; do
+            echo "Running analysis for $dir"
+            docker run --rm \
+              -e SONAR_HOST_URL=$SONAR_HOST_URL \
+              -e SONAR_TOKEN=$SONAR_TOKEN \
+              -v "${{ github.workspace }}/$dir:/usr/src" \
+              sonarsource/sonar-scanner-cli \
+              -Dsonar.projectKey=$(basename $dir) \
+              -Dsonar.organization=sast-pipeline-ba \
+              -Dsonar.sources=/usr/src
+          done

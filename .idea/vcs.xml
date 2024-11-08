@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/DVWA" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/NodeGoat" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/VulnerableApp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/WebGoat" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/juice-shop" vcs="Git" />
+  </component>
+</project>
