@@ -47,13 +47,19 @@ jobs:
          cd ${{ matrix.project.path }}
          mvn clean compile
 
+      - name: Set up Gradle
+        if: matrix.project.name == 'VulnerableApp'
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '8.0'
+
       - name: Build Java Project with Gradle
         if: matrix.project.name == 'VulnerableApp'
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
-          ./gradlew wrapper --gradle-version 8.0
           ./gradlew build
+      
 
       # Analyze the project with SonarCloud
       - name: Analyze Project with SonarCloud
