@@ -62,6 +62,15 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
 
+      - name: List Target Directory (Maven)
+        if: matrix.project.build-tool == 'maven'
+        run: ls -R ${{ matrix.project.path }}/target/classes
+
+      - name: List Build Directory (Gradle)
+        if: matrix.project.build-tool == 'gradle'
+        run: ls -R ${{ matrix.project.path }}/build/classes/java/main
+
+
       # Separate SonarCloud analysis for Maven and Gradle
       - name: Analyze Maven Project with SonarCloud
         if: matrix.project.build-tool == 'maven'
@@ -77,7 +86,7 @@ jobs:
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.sources=/usr/src \
-            -Dsonar.java.binaries=/usr/src/target/classes
+            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/target/classes
 
       - name: Analyze Gradle Project with SonarCloud
         if: matrix.project.build-tool == 'gradle'
@@ -93,7 +102,7 @@ jobs:
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.sources=/usr/src \
-            -Dsonar.java.binaries=/usr/src/build/classes/java/main
+            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/build/classes/java/main
 
       # Fallback for non-Java projects
       - name: Analyze Non-Java Project with SonarCloud
