@@ -61,6 +61,11 @@ jobs:
               -Dsonar.sources=/usr/src \
               -Dsonar.java.binaries=/usr/src/target/classes"
 
+      # Set Gradlew Permissions (for Gradle projects)
+      - name: Set Gradlew Permissions
+        if: matrix.project.build-tool == 'gradle'
+        run: chmod +x ${{ matrix.project.path }}/gradlew
+
       - name: Run Gradle Build and SonarCloud Analysis in Docker
         if: matrix.project.build-tool == 'gradle'
         env:
