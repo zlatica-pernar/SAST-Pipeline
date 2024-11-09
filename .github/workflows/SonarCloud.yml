@@ -21,8 +21,10 @@ jobs:
             path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
+            java-version: '11'
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
+            java-version: '21'
           - name: Juice-Shop
             path: VulnerableTestRepos/Juice-Shop
 
@@ -31,21 +33,14 @@ jobs:
         uses: actions/checkout@v2
 
       # Set up Java environment for Java projects
-      - name: Set up Java for VulnerableApp
-        if: matrix.project.name == 'VulnerableApp'
+      - name: Set up Java
+        if: matrix.project.java-version != null
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: ${{ matrix.project.java-version }}
 
-      - name: Set up Java for Webgoat
-        if: matrix.project.name == 'Webgoat'
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '21'
-
-            # Build step for Java projects (Maven or Gradle)
+    # Build step for Java projects (Maven or Gradle)
       - name: Build Java Project with Maven
         if: matrix.project.name == 'Webgoat'
         run: |
@@ -57,15 +52,10 @@ jobs:
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
+          ./gradlew wrapper --gradle-version 8.0
           ./gradlew build
 
-      # Build step for Java projects
-      - name: Build Java Project
-        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'Webgoat'
-        run: |
-          cd ${{ matrix.project.path }}
-          mvn clean compile
-
+      # Analyze the project with SonarCloud
       - name: Analyze Project with SonarCloud
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
