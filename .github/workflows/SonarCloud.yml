@@ -77,11 +77,4 @@ jobs:
           -Dsonar.projectKey=${{ matrix.project.name }} \
           -Dsonar.organization=sast-pipeline \
           -Dsonar.sources=/usr/src
-          ${{
-            matrix.project.build_tool != null &&
-            (
-              matrix.project.build_tool == 'maven'
-              ? '-Dsonar.java.binaries=/usr/src/target/classes'
-              : '-Dsonar.java.binaries=/usr/src/build/classes/java/main'
-             ) || ''
-          }}
+          $(if [ -d "/usr/src/target/classes" ]; then echo "-Dsonar.java.binaries=/usr/src/target/classes"; elif [ -d "/usr/src/build/classes/java/main" ]; then echo "-Dsonar.java.binaries=/usr/src/build/classes/java/main"; fi)
