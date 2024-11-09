@@ -31,12 +31,19 @@ jobs:
         uses: actions/checkout@v2
 
       # Set up Java environment for Java projects
-      - name: Set up Java
-        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'Webgoat'
+      - name: Set up Java for VulnerableApp
+        if: matrix.project.name == 'Webgoat'
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
+
+      - name: Set up Java for Webgoat
+        if: matrix.project.name == 'WebGoat'
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '21'
 
             # Build step for Java projects (Maven or Gradle)
       - name: Build Java Project with Maven
