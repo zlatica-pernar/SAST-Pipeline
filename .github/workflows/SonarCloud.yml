@@ -32,14 +32,14 @@ jobs:
 
       # Set up Java environment for Java projects
       - name: Set up Java for VulnerableApp
-        if: matrix.project.name == 'Webgoat'
+        if: matrix.project.name == 'VulnerableApp'
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
 
       - name: Set up Java for Webgoat
-        if: matrix.project.name == 'WebGoat'
+        if: matrix.project.name == 'Webgoat'
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
