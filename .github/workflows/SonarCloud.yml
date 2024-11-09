@@ -17,8 +17,10 @@ jobs:
         project:
           - name: DVWA
             path: VulnerableTestRepos/DVWA
+            build-tool: ""
           - name: Nodegoat
             path: VulnerableTestRepos/Nodegoat
+            build-tool: ""
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
             java-version: 11
@@ -29,6 +31,7 @@ jobs:
             build-tool: maven
           - name: Juice-Shop
             path: VulnerableTestRepos/Juice-Shop
+            build-tool: ""
 
     steps:
       - name: Check out code
