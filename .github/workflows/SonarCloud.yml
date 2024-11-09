@@ -42,8 +42,28 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.project.java-version }}
 
-      # Separate Maven and Gradle build and analysis steps within Docker
-      - name: Run Maven Build and SonarCloud Analysis in Docker
+      # Build step for Maven projects
+      - name: Build Java Project with Maven
+        if: matrix.project.build-tool == 'maven'
+        run: |
+          cd ${{ matrix.project.path }}
+
+      - name: Set up Gradle
+        if: matrix.project.build-tool == 'gradle'
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '8.0'
+
+      # Set Gradlew Permissions and Build Gradle Project
+      - name: Build Java Project with Gradle
+        if: matrix.project.build-tool == 'gradle'
+        run: |
+          cd ${{ matrix.project.path }}
+          chmod +x ./gradlew
+          ./gradlew build
+
+      # Separate SonarCloud analysis for Maven and Gradle
+      - name: Analyze Maven Project with SonarCloud
         if: matrix.project.build-tool == 'maven'
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -53,20 +73,13 @@ jobs:
             -e SONAR_HOST_URL=$SONAR_HOST_URL \
             -e SONAR_TOKEN=$SONAR_TOKEN \
             -v "${{ github.workspace }}/${{ matrix.project.path }}:/usr/src" \
-            -w "/usr/src" \
             sonarsource/sonar-scanner-cli \
-            /bin/bash -c "mvn clean compile && sonar-scanner \
-              -Dsonar.projectKey=${{ matrix.project.name }} \
-              -Dsonar.organization=sast-pipeline \
-              -Dsonar.sources=/usr/src \
-              -Dsonar.java.binaries=/usr/src/target/classes"
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.sources=/usr/src \
+            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/target/classes
 
-      # Set Gradlew Permissions (for Gradle projects)
-      - name: Set Gradlew Permissions
-        if: matrix.project.build-tool == 'gradle'
-        run: chmod +x ${{ matrix.project.path }}/gradlew
-
-      - name: Run Gradle Build and SonarCloud Analysis in Docker
+      - name: Analyze Gradle Project with SonarCloud
         if: matrix.project.build-tool == 'gradle'
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -76,13 +89,11 @@ jobs:
             -e SONAR_HOST_URL=$SONAR_HOST_URL \
             -e SONAR_TOKEN=$SONAR_TOKEN \
             -v "${{ github.workspace }}/${{ matrix.project.path }}:/usr/src" \
-            -w "/usr/src" \
             sonarsource/sonar-scanner-cli \
-            /bin/bash -c "chmod +x ./gradlew && ./gradlew wrapper --gradle-version 8.0 && ./gradlew build && sonar-scanner \
-              -Dsonar.projectKey=${{ matrix.project.name }} \
-              -Dsonar.organization=sast-pipeline \
-              -Dsonar.sources=/usr/src \
-              -Dsonar.java.binaries=/usr/src/build/classes/java/main"
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.sources=/usr/src \
+            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/build/classes/java/main
 
       # Fallback for non-Java projects
       - name: Analyze Non-Java Project with SonarCloud
