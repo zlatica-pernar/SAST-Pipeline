@@ -37,6 +37,18 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
+            # Build step for Java projects (Maven or Gradle)
+      - name: Build Java Project with Maven
+        if: matrix.project.name == 'WebGoat'
+        run: |
+         cd ${{ matrix.project.path }}
+         mvn clean compile
+
+      - name: Build Java Project with Gradle
+        if: matrix.project.name == 'VulnerableApp'
+        run: |
+          cd ${{ matrix.project.path }}
+          ./gradlew build
 
       # Build step for Java projects
       - name: Build Java Project
