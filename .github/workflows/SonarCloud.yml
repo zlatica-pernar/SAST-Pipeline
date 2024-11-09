@@ -9,26 +9,53 @@ on:
       - main
 
 jobs:
-  analyze:
+  sonarcloud_scan:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        project:
+          - name: DVWA
+            path: VulnerableTestRepos/DVWA
+          - name: NodeGoat
+            path: VulnerableTestRepos/NodeGoat
+          - name: VulnerableApp
+            path: VulnerableTestRepos/VulnerableApp
+          - name: WebGoat
+            path: VulnerableTestRepos/WebGoat
+          - name: juice-shop
+            path: VulnerableTestRepos/juice-shop
+
     steps:
-      - name: Check out repository
+      - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Analyze all projects with SonarCloud
+      # Set up Java environment for Java projects
+      - name: Set up Java
+        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'WebGoat'
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      # Build step for Java projects
+      - name: Build Java Project
+        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'WebGoat'
+        run: |
+          cd ${{ matrix.project.path }}
+          mvn clean compile
+
+      - name: Analyze Project with SonarCloud
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          for dir in VulnerableTestRepos/*; do
-            echo "Running analysis for $dir"
-            docker run --rm \
-              -e SONAR_HOST_URL=$SONAR_HOST_URL \
-              -e SONAR_TOKEN=$SONAR_TOKEN \
-              -v "${{ github.workspace }}/$dir:/usr/src" \
-              sonarsource/sonar-scanner-cli \
-              -Dsonar.projectKey=$(basename $dir) \
-              -Dsonar.organization=sast-pipeline \
-              -Dsonar.sources=/usr/src
-          done
+          echo "Running SonarCloud analysis for ${{ matrix.project.name }}"
+          docker run --rm \
+          -e SONAR_HOST_URL=$SONAR_HOST_URL \
+          -e SONAR_TOKEN=$SONAR_TOKEN \
+          -v "${{ github.workspace }}/${{ matrix.project.path }}:/usr/src" \
+          sonarsource/sonar-scanner-cli \
+          -Dsonar.projectKey=${{ matrix.project.name }} \
+          -Dsonar.organization=sast-pipeline \
+          -Dsonar.sources=/usr/src
