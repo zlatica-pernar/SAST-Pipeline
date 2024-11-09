@@ -70,11 +70,11 @@ jobs:
         run: |
           echo "Running SonarCloud analysis for ${{ matrix.project.name }}"
           
-          binaries_option=""
+           binaries_option=""
           if [[ "${{ matrix.project.build_tool }}" == "maven" ]]; then
-            binaries_option="-Dsonar.java.binaries=/usr/src/target/classes"
+            binaries_option="-Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/target/classes"
           elif [[ "${{ matrix.project.build_tool }}" == "gradle" ]]; then
-            binaries_option="-Dsonar.java.binaries=/usr/src/build/classes/java/main"
+            binaries_option="-Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/build/classes/java/main"
           fi
           
           docker run --rm \
