@@ -52,7 +52,7 @@ jobs:
 
       # Build step for Java projects
       - name: Build Java Project
-        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'WebGoat'
+        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'Webgoat'
         run: |
           cd ${{ matrix.project.path }}
           mvn clean compile
