@@ -3,9 +3,9 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/DVWA" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/NodeGoat" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/Juice-Shop" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/Nodegoat" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/VulnerableApp" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/WebGoat" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/juice-shop" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/VulnerableTestRepos/Webgoat" vcs="Git" />
   </component>
 </project>

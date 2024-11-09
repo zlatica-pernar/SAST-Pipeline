@@ -29,6 +29,6 @@ jobs:
               -v "${{ github.workspace }}/$dir:/usr/src" \
               sonarsource/sonar-scanner-cli \
               -Dsonar.projectKey=$(basename $dir) \
-              -Dsonar.organization=sast-pipeline-ba \
+              -Dsonar.organization=sast-pipeline \
               -Dsonar.sources=/usr/src
           done
