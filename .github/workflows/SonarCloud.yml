@@ -69,6 +69,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           echo "Running SonarCloud analysis for ${{ matrix.project.name }}"
+          
+          binaries_option=""
+          if [[ "${{ matrix.project.build_tool }}" == "maven" ]]; then
+            binaries_option="-Dsonar.java.binaries=/usr/src/target/classes"
+          elif [[ "${{ matrix.project.build_tool }}" == "gradle" ]]; then
+            binaries_option="-Dsonar.java.binaries=/usr/src/build/classes/java/main"
+          fi
+          
           docker run --rm \
           -e SONAR_HOST_URL=$SONAR_HOST_URL \
           -e SONAR_TOKEN=$SONAR_TOKEN \
@@ -77,4 +85,4 @@ jobs:
           -Dsonar.projectKey=${{ matrix.project.name }} \
           -Dsonar.organization=sast-pipeline \
           -Dsonar.sources=/usr/src
-          $(if [ -d "/usr/src/target/classes" ]; then echo "-Dsonar.java.binaries=/usr/src/target/classes"; elif [ -d "/usr/src/build/classes/java/main" ]; then echo "-Dsonar.java.binaries=/usr/src/build/classes/java/main"; fi)
+          $binaries_option
