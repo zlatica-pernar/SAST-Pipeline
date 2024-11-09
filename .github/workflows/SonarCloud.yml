@@ -77,7 +77,7 @@ jobs:
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.sources=/usr/src \
-            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/target/classes
+            -Dsonar.java.binaries=/usr/src/target/classes
 
       - name: Analyze Gradle Project with SonarCloud
         if: matrix.project.build-tool == 'gradle'
