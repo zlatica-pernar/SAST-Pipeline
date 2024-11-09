@@ -17,14 +17,14 @@ jobs:
         project:
           - name: DVWA
             path: VulnerableTestRepos/DVWA
-          - name: NodeGoat
-            path: VulnerableTestRepos/NodeGoat
+          - name: Nodegoat
+            path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
-          - name: WebGoat
-            path: VulnerableTestRepos/WebGoat
-          - name: juice-shop
-            path: VulnerableTestRepos/juice-shop
+          - name: Webgoat
+            path: VulnerableTestRepos/Webgoat
+          - name: Juice-Shop
+            path: VulnerableTestRepos/Juice-Shop
 
     steps:
       - name: Check out code
