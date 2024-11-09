@@ -93,7 +93,7 @@ jobs:
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.sources=/usr/src \
-            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/build/classes/java/main
+            -Dsonar.java.binaries=/usr/src/build/classes/java/main
 
       # Fallback for non-Java projects
       - name: Analyze Non-Java Project with SonarCloud
