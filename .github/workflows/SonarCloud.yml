@@ -32,14 +32,15 @@ jobs:
 
       # Set up Java environment for Java projects
       - name: Set up Java
-        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'WebGoat'
+        if: matrix.project.name == 'VulnerableApp' || matrix.project.name == 'Webgoat'
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '11'
+
             # Build step for Java projects (Maven or Gradle)
       - name: Build Java Project with Maven
-        if: matrix.project.name == 'WebGoat'
+        if: matrix.project.name == 'Webgoat'
         run: |
          cd ${{ matrix.project.path }}
          mvn clean compile
