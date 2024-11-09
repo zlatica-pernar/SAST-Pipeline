@@ -49,6 +49,7 @@ jobs:
         if: matrix.project.name == 'VulnerableApp'
         run: |
           cd ${{ matrix.project.path }}
+          chmod +x ./gradlew
           ./gradlew build
 
       # Build step for Java projects
