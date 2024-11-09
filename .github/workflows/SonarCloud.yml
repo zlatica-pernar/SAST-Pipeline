@@ -73,7 +73,7 @@ jobs:
             -v "${{ github.workspace }}/${{ matrix.project.path }}:/usr/src" \
             -w "/usr/src" \
             sonarsource/sonar-scanner-cli \
-            /bin/bash -c "./gradlew build && sonar-scanner \
+            /bin/bash -c "chmod +x ./gradlew && ./gradlew wrapper --gradle-version 8.0 && ./gradlew build && sonar-scanner \
               -Dsonar.projectKey=${{ matrix.project.name }} \
               -Dsonar.organization=sast-pipeline \
               -Dsonar.sources=/usr/src \
