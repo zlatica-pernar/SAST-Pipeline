@@ -21,10 +21,12 @@ jobs:
             path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
-            java-version: '11'
+            java-version: 11
+            build-tool: gradle
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
-            java-version: '21'
+            java-version: 21
+            build-tool: maven
           - name: Juice-Shop
             path: VulnerableTestRepos/Juice-Shop
 
@@ -76,3 +78,4 @@ jobs:
           -Dsonar.projectKey=${{ matrix.project.name }} \
           -Dsonar.organization=sast-pipeline \
           -Dsonar.sources=/usr/src
+           ${{ matrix.project.build_tool == 'maven' && '-Dsonar.java.binaries=/usr/src/target/classes' || '-Dsonar.java.binaries=/usr/src/build/classes/java/main' }}
