@@ -61,7 +61,6 @@ jobs:
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
           ./gradlew build
-      
 
       # Analyze the project with SonarCloud
       - name: Analyze Project with SonarCloud
@@ -78,4 +77,11 @@ jobs:
           -Dsonar.projectKey=${{ matrix.project.name }} \
           -Dsonar.organization=sast-pipeline \
           -Dsonar.sources=/usr/src
-           ${{ matrix.project.build_tool == 'maven' && '-Dsonar.java.binaries=/usr/src/target/classes' || '-Dsonar.java.binaries=/usr/src/build/classes/java/main' }}
+          ${{
+            matrix.project.build_tool != null &&
+            (
+              matrix.project.build_tool == 'maven'
+              ? '-Dsonar.java.binaries=/usr/src/target/classes'
+              : '-Dsonar.java.binaries=/usr/src/build/classes/java/main'
+             ) || ''
+          }}
