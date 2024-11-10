@@ -34,7 +34,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      # Set up Java environment for Java projects
       - name: Set up Java
         if: matrix.project.java-version != null
         uses: actions/setup-java@v2
@@ -42,81 +41,41 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.project.java-version }}
 
-      # Build step for Maven projects
-      - name: Build Java Project with Maven
-        if: matrix.project.build-tool == 'maven'
-        run: |
-          cd ${{ matrix.project.path }}
-          mvn clean compile
-
-      - name: Set up Gradle
-        if: matrix.project.build-tool == 'gradle'
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: '8.0'
-
-      # Set Gradlew Permissions and Build Gradle Project
-      - name: Build Java Project with Gradle
-        if: matrix.project.build-tool == 'gradle'
-        run: |
-          cd ${{ matrix.project.path }}
-          chmod +x ./gradlew
-          ./gradlew build
-
-      - name: List Target Directory (Maven)
-        if: matrix.project.build-tool == 'maven'
-        run: ls -R ${{ matrix.project.path }}/target/classes
-
-      - name: List Build Directory (Gradle)
-        if: matrix.project.build-tool == 'gradle'
-        run: ls -R ${{ matrix.project.path }}/build/classes/java/main
-
-
-      # Separate SonarCloud analysis for Maven and Gradle
-      - name: Analyze Maven Project with SonarCloud
+      # SonarCloud Analysis for Maven Projects
+      - name: Build and Analyze Maven Project with SonarCloud
         if: matrix.project.build-tool == 'maven'
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          docker run --rm \
-            -e SONAR_HOST_URL=$SONAR_HOST_URL \
-            -e SONAR_TOKEN=$SONAR_TOKEN \
-            -v "${{ github.workspace }}/${{ matrix.project.path }}:/usr/src" \
-            sonarsource/sonar-scanner-cli \
+          cd ${{ matrix.project.path }}
+          mvn clean verify sonar:sonar \
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
-            -Dsonar.sources=/usr/src \
-            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/target/classes
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
 
-      - name: Analyze Gradle Project with SonarCloud
+      # SonarCloud Analysis for Gradle Projects
+      - name: Build and Analyze Gradle Project with SonarCloud
         if: matrix.project.build-tool == 'gradle'
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          docker run --rm \
-            -e SONAR_HOST_URL=$SONAR_HOST_URL \
-            -e SONAR_TOKEN=$SONAR_TOKEN \
-            -v "${{ github.workspace }}/${{ matrix.project.path }}:/usr/src" \
-            sonarsource/sonar-scanner-cli \
+          cd ${{ matrix.project.path }}
+          ./gradlew clean build sonarqube \
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
-            -Dsonar.sources=/usr/src \
-            -Dsonar.java.binaries=${{ github.workspace }}/${{ matrix.project.path }}/build/classes/java/main
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
 
-      # Fallback for non-Java projects
-      - name: Analyze Non-Java Project with SonarCloud
+      # SonarCloud Analysis for Non-Java Projects
+      - name: Analyze Non-Java Project with SonarCloud Action
         if: matrix.project.build-tool == null
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          docker run --rm \
-            -e SONAR_HOST_URL=$SONAR_HOST_URL \
-            -e SONAR_TOKEN=$SONAR_TOKEN \
-            -v "${{ github.workspace }}/${{ matrix.project.path }}:/usr/src" \
-            sonarsource/sonar-scanner-cli \
-            -Dsonar.projectKey=${{ matrix.project.name }} \
-            -Dsonar.organization=sast-pipeline \
-            -Dsonar.sources=/usr/src
+        with:
+          args: >
+            -Dsonar.projectKey=${{ matrix.project.name }}
+            -Dsonar.organization=sast-pipeline
+            -Dsonar.sources=${{ matrix.project.path }}
+          
