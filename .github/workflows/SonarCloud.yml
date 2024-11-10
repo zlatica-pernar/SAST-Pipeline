@@ -68,6 +68,7 @@ jobs:
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
+          ./gradlew spotlessApply
           ./gradlew clean build sonarqube \
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
