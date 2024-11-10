@@ -47,6 +47,7 @@ jobs:
         if: matrix.project.build-tool == 'maven'
         run: |
           cd ${{ matrix.project.path }}
+          mvn clean compile
 
       - name: Set up Gradle
         if: matrix.project.build-tool == 'gradle'
