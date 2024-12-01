@@ -1,0 +1,108 @@
+name: Sonarcloud Base Scan
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lambdas/test/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloudScan1:
+    name: DVWA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: VulnerableTestRepos/DVWA
+
+  sonarcloudScan2:
+    name: Nodegoat
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: VulnerableTestRepos/Nodegoat
+
+  sonarcloudScan3:
+    name: VulnerableApp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '8.0'
+
+      - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd VulnerableTestRepos/VulnerableApp
+          chmod +x ./gradlew
+          ./gradlew sonar \
+            -Dsonar.projectKey=VulnerableApp \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
+
+  sonarcloudScan4:
+    name: Webgoat
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd VulnerableTestRepos/Webgoat
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=Webgoat \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
+
+  sonarcloudScan5:
+    name: Juice-Shop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: VulnerableTestRepos/Juice-Shop
