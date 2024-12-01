@@ -20,7 +20,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: VulnerableTestRepos/DVWA
+          args: >
+            -Dsonar.projectKey=DVWA
+            -Dsonar.organization=sast-pipeline
+            -Dsonar.sources=VulnerableTestRepos/DVWA
 
   sonarcloudScan2:
     name: Nodegoat
@@ -34,7 +37,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: VulnerableTestRepos/Nodegoat
+          args: >
+            -Dsonar.projectKey=Nodegoat
+            -Dsonar.organization=sast-pipeline
+            -Dsonar.sources=VulnerableTestRepos/Nodegoat
 
   sonarcloudScan3:
     name: VulnerableApp
@@ -104,4 +110,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: VulnerableTestRepos/Juice-Shop
+          args: >
+            -Dsonar.projectKey=Juice-Shop
+            -Dsonar.organization=sast-pipeline
+            -Dsonar.sources=VulnerableTestRepos/Juice-Shop
