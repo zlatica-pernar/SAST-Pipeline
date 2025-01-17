@@ -2,10 +2,10 @@ name: Sonarcloud Base Scan
 on:
   push:
     branches:
-      - feature/SonarDocu
+      - feature/Base
   pull_request:
     branches:
-      - feature/SonarDocu
+      - feature/Base
 
 jobs:
   sonarcloudScan1:
