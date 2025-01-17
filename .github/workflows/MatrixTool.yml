@@ -1,12 +1,12 @@
-name: SonarCloud Analysis with Matrix Workflow incl. Tool
+name: SonarCloud Analysis with Matrix Workflow
 
 on:
   push:
     branches:
-      - feature/MatrixTool
+      - feature/
   pull_request:
     branches:
-      - feature/MatrixTool
+      - feature/Matrix
 
 jobs:
   sonarcloud_scan:
