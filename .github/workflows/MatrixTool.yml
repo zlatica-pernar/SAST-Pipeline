@@ -3,7 +3,7 @@ name: SonarCloud Analysis with Matrix Workflow
 on:
   push:
     branches:
-      - feature/
+      - feature/Matrix
   pull_request:
     branches:
       - feature/Matrix
