@@ -36,7 +36,7 @@ jobs:
 
       - name: Cache Node.js modules
         if: matrix.project.build-tool == null
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.npm
@@ -47,18 +47,19 @@ jobs:
 
       - name: Cache Maven packages
         if: matrix.project.build-tool == 'maven'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: maven-${{ matrix.project.name  }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-${{ matrix.project.name }}-
 
-      - name: Cache Gradle packages
-        if: matrix.project.build-tool == 'gradle'
+      - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
           key: gradle-${{ matrix.project.name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ matrix.project.name }}-
@@ -106,7 +107,7 @@ jobs:
       # SonarCloud Analysis for Non-Java Projects
       - name: Analyze Non-Java Project with SonarCloud Action
         if: matrix.project.build-tool == null
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
