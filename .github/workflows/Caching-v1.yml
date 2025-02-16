@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Cache Java Installation
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /opt/hostedtoolcache/Java_Adopt_jdk/
           key: java-${{ matrix.project.java-version }}
@@ -63,13 +63,13 @@ jobs:
             maven-${{ matrix.project.name }}-
 
       - name: Cache Gradle dependencies & Wrapper
-        uses: actions/cache@v3
+        if: matrix.project.build-tool == 'gradle'
+        uses: actions/cache@v4
         id: gradle-cache
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            ~/.gradle/gradle-8.0-bin.zip
           key: gradle-${{ matrix.project.name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ matrix.project.name }}-
@@ -81,11 +81,11 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.project.java-version }}
 
-      - name: Set up Gradle
-        if: matrix.project.name == 'VulnerableApp'
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: '8.0'
+#      - name: Set up Gradle
+#        if: matrix.project.name == 'VulnerableApp'
+#        uses: gradle/gradle-build-action@v2
+#        with:
+#          gradle-version: '8.0'
 
       # SonarCloud Analysis for Maven Projects
       - name: Build and Analyze Maven Project with SonarCloud
