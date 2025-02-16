@@ -76,7 +76,7 @@ jobs:
       # SonarCloud Analysis for Non-Java Projects
       - name: Analyze Non-Java Project with SonarCloud Action
         if: matrix.project.build-tool == null
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
