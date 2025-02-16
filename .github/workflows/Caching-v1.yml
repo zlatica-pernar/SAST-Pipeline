@@ -34,6 +34,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Cache Java Installation
+        uses: actions/cache@v3
+        with:
+          path: /opt/hostedtoolcache/Java_Adopt_jdk/
+          key: java-${{ matrix.project.java-version }}
+          restore-keys: |
+           java-${{ matrix.project.java-version }}-
+
       - name: Cache Node.js modules
         if: matrix.project.build-tool == null
         uses: actions/cache@v4
@@ -54,12 +62,14 @@ jobs:
           restore-keys: |
             maven-${{ matrix.project.name }}-
 
-      - name: Cache Gradle dependencies
+      - name: Cache Gradle dependencies & Wrapper
         uses: actions/cache@v3
+        id: gradle-cache
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
+            ~/.gradle/gradle-8.0-bin.zip
           key: gradle-${{ matrix.project.name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ matrix.project.name }}-
