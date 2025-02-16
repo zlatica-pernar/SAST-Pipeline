@@ -43,17 +43,6 @@ jobs:
           restore-keys: |
            java-${{ matrix.project.java-version }}-
 
-      - name: Cache Node.js modules
-        if: matrix.project.build-tool == null
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            ~/.yarn
-          key: node-${{ matrix.project.name }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}
-          restore-keys: |
-            node-${{ matrix.project.name }}-
-
       - name: Cache Maven packages
         if: matrix.project.build-tool == 'maven'
         uses: actions/cache@v4
