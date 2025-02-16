@@ -1,0 +1,111 @@
+name: caching-v1
+
+on:
+  push:
+    branches:
+      - feature/Caching
+  pull_request:
+    branches:
+      - feature/Caching
+
+jobs:
+  sonarcloud_scan:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project:
+          - name: DVWA
+            path: VulnerableTestRepos/DVWA
+          - name: Nodegoat
+            path: VulnerableTestRepos/Nodegoat
+          - name: VulnerableApp
+            path: VulnerableTestRepos/VulnerableApp
+            java-version: 17
+            build-tool: gradle
+          - name: Webgoat
+            path: VulnerableTestRepos/Webgoat
+            java-version: 21
+            build-tool: maven
+          - name: Juice-Shop
+            path: VulnerableTestRepos/Juice-Shop
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Cache Java Installation
+        if: matrix.project.java-version != null
+        uses: actions/cache@v4
+        with:
+          path: /opt/hostedtoolcache/Java_Adopt_jdk/
+          key: java-${{ matrix.project.java-version }}
+          restore-keys: |
+            java-${{ matrix.project.java-version }}-
+
+      - name: Cache Maven packages
+        if: matrix.project.build-tool == 'maven'
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ matrix.project.name  }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ matrix.project.name }}-
+
+      - name: Cache Gradle dependencies & Wrapper
+        if: matrix.project.build-tool == 'gradle'
+        uses: actions/cache@v4
+        id: gradle-cache
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ matrix.project.name }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ matrix.project.name }}-
+
+      - name: Set up Java
+        if: matrix.project.java-version != null
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: ${{ matrix.project.java-version }}
+
+      # SonarCloud Analysis for Maven Projects
+      - name: Build and Analyze Maven Project with SonarCloud
+        if: matrix.project.build-tool == 'maven'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd ${{ matrix.project.path }}
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
+
+      # SonarCloud Analysis for Gradle Projects
+      - name: Build and Analyze Gradle Project with SonarCloud
+        if: matrix.project.build-tool == 'gradle'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd ${{ matrix.project.path }}
+          chmod +x ./gradlew
+          ./gradlew sonar \
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
+
+      # SonarCloud Analysis for Non-Java Projects
+      - name: Analyze Non-Java Project with SonarCloud Action
+        if: matrix.project.build-tool == null
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ matrix.project.name }}
+            -Dsonar.organization=sast-pipeline
+            -Dsonar.sources=${{ matrix.project.path }}
