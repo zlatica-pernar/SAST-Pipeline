@@ -1,12 +1,12 @@
-name: SonarCloud Analysis with Matrix Workflow
+name: caching-v2
 
 on:
   push:
     branches:
-      - feature/Matrix
+      - feature/Caching
   pull_request:
     branches:
-      - feature/Matrix
+      - feature/Caching
 
 jobs:
   sonarcloud_scan:
