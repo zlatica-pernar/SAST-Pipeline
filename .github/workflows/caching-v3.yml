@@ -21,7 +21,7 @@ jobs:
             path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
-            java-version: 17
+            java-version: 8
             build-tool: gradle
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
@@ -51,16 +51,7 @@ jobs:
         id: maven-build-cache
         uses: actions/cache@v4
         with:
-          path:  ${{ matrix.project.path }}/target
-          key: build-${{ matrix.project.name }}-${{ github.sha }}
-          restore-keys: build-${{ matrix.project.name }}-
-
-      - name: Cache Gradle Build Output
-        if: matrix.project.build-tool == 'gradle'
-        id: gradle-build-cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ matrix.project.path }}/build
+          path: ${{ matrix.project.path }}/target
           key: build-${{ matrix.project.name }}-${{ github.sha }}
           restore-keys: build-${{ matrix.project.name }}-
 
@@ -89,19 +80,27 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=$SONAR_TOKEN
 
-      # SonarCloud Analysis for Gradle Projects
-      - name: Build and Analyze Gradle Project with SonarCloud (Full Build)
+      - name: Cache Gradle Build Output
+        if: matrix.project.build-tool == 'gradle'
+        id: gradle-build-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.project.path }}/build
+          key: build-${{ matrix.project.name }}-${{ github.sha }}
+          restore-keys: build-${{ matrix.project.name }}-
+
+      - name: Build Gradle Project with Java 8
         if: ${{ matrix.project.build-tool == 'gradle' && steps.gradle-build-cache.outputs.cache-hit != 'true' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           cd ${{ matrix.project.path }}
-          chmod +x ./gradlew
-          ./gradlew sonar \
-            -Dsonar.projectKey=${{ matrix.project.name }} \
-            -Dsonar.organization=sast-pipeline \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=$SONAR_TOKEN
+          ./gradlew build
+
+      - name: change java if gradle project < java 17
+        if: fromJSON(matrix.project.java-version) < 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
 
       - name: Analyze Gradle Project with SonarCloud (Cached Build)
         if: ${{ matrix.project.build-tool == 'gradle' && steps.gradle-build-cache.outputs.cache-hit == 'true' }}
