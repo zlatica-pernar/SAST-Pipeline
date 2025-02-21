@@ -93,6 +93,7 @@ jobs:
         if: ${{ matrix.project.build-tool == 'gradle' && steps.gradle-build-cache.outputs.cache-hit != 'true' }}
         run: |
           cd ${{ matrix.project.path }}
+           chmod +x ./gradlew
           ./gradlew build
 
       - name: change java if gradle project < java 17
