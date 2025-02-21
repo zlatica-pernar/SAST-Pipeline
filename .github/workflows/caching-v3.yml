@@ -104,7 +104,7 @@ jobs:
           java-version: 17
 
       - name: Analyze Gradle Project with SonarCloud (Cached Build)
-        if: ${{ matrix.project.build-tool == 'gradle' && steps.gradle-build-cache.outputs.cache-hit == 'true' }}
+        if: matrix.project.build-tool == 'gradle'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
