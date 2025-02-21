@@ -1,4 +1,4 @@
-name: caching-v2
+name: caching-v3
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
 
       - name: Cache Maven Build Output
         if: matrix.project.build-tool == 'maven'
-        id: maven-cache
+        id: maven-build-cache
         uses: actions/cache@v4
         with:
           path:  ${{ matrix.project.path }}/target
