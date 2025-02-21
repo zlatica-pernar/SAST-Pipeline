@@ -96,7 +96,7 @@ jobs:
           ./gradlew build
 
       - name: change java if gradle project < java 17
-        if: fromJSON(matrix.project.java-version) < 17
+        if: matrix.project.build-tool == 'gradle'
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
