@@ -71,7 +71,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           cd ${{ matrix.project.path }}
-          if [[ "${{ steps.maven-build-cache.outputs.cache-hit }}" == 'true' ]]; then
+          if [ "${{ steps.maven-build-cache.outputs.cache-hit }}" == 'true' ]; then
             mvn sonar:sonar \
               -Dsonar.projectKey=${{ matrix.project.name }} \
               -Dsonar.organization=sast-pipeline \
@@ -93,7 +93,7 @@ jobs:
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
-          if [[ "${{ steps.gradle-build-cache.outputs.cache-hit }}" == 'true' ]]; then
+          if [ "${{ steps.gradle-build-cache.outputs.cache-hit }}" == 'true' ]; then
             ./gradlew sonar \
               -Dsonar.projectKey=${{ matrix.project.name }} \
               -Dsonar.organization=sast-pipeline \
