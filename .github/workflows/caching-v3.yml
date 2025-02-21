@@ -69,47 +69,56 @@ jobs:
         run: echo "Cache Hit ${{ steps.gradle-build-cache.outputs.cache-hit }}"
 
       # SonarCloud Analysis for Maven Projects
-      - name: Build and Analyze Maven Project with SonarCloud
-        if: matrix.project.build-tool == 'maven'
+      - name: Build and Analyze Maven Project with SonarCloud (Full Build)
+        if: steps.maven-build-cache.outputs.cache-hit != 'true'
+        env:
+         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd ${{ matrix.project.path }}
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
+
+      - name: Analyze Maven Project with SonarCloud (Cached Build)
+        if: steps.maven-build-cache.outputs.cache-hit == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           cd ${{ matrix.project.path }}
-          if [ "${{ steps.maven-build-cache.outputs.cache-hit }}" == 'true' ]; then
-            mvn sonar:sonar \
-              -Dsonar.projectKey=${{ matrix.project.name }} \
-              -Dsonar.organization=sast-pipeline \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.token=$SONAR_TOKEN
-          else
-            mvn clean verify sonar:sonar \
-              -Dsonar.projectKey=${{ matrix.project.name }} \
-              -Dsonar.organization=sast-pipeline \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.token=$SONAR_TOKEN
-          fi
+          mvn sonar:sonar \
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
 
       # SonarCloud Analysis for Gradle Projects
-      - name: Build and Analyze Gradle Project with SonarCloud
-        if: matrix.project.build-tool == 'gradle'
+      - name: Build and Analyze Gradle Project with SonarCloud (Full Build)
+        if: steps.gradle-build-cache.outputs.cache-hit != 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
-          if [ "${{ steps.gradle-build-cache.outputs.cache-hit }}" == 'true' ]; then
-            ./gradlew sonar \
-              -Dsonar.projectKey=${{ matrix.project.name }} \
-              -Dsonar.organization=sast-pipeline \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.token=$SONAR_TOKEN
-          else
-            ./gradlew build sonar \
-              -Dsonar.projectKey=${{ matrix.project.name }} \
-              -Dsonar.organization=sast-pipeline \
-              -Dsonar.host.url=https://sonarcloud.io \
-              -Dsonar.token=$SONAR_TOKEN
-          fi
+          ./gradlew build sonar \
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
+
+      - name: Analyze Gradle Project with SonarCloud (Cached Build)
+        if: steps.gradle-build-cache.outputs.cache-hit == 'true'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          cd ${{ matrix.project.path }}
+          chmod +x ./gradlew
+          ./gradlew sonar \
+            -Dsonar.projectKey=${{ matrix.project.name }} \
+            -Dsonar.organization=sast-pipeline \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=$SONAR_TOKEN
 
       # SonarCloud Analysis for Non-Java Projects
       - name: Analyze Non-Java Project with SonarCloud Action
