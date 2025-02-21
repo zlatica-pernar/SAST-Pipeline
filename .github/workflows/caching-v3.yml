@@ -21,7 +21,7 @@ jobs:
             path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
-            java-version: 8
+            java-version: 17
             build-tool: gradle
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
@@ -89,21 +89,7 @@ jobs:
           key: build-${{ matrix.project.name }}-${{ github.sha }}
           restore-keys: build-${{ matrix.project.name }}-
 
-      - name: Build Gradle Project with Java 8
-        if: ${{ matrix.project.build-tool == 'gradle' && steps.gradle-build-cache.outputs.cache-hit != 'true' }}
-        run: |
-          cd ${{ matrix.project.path }}
-           chmod +x ./gradlew
-          ./gradlew build
-
-      - name: change java if gradle project < java 17
-        if: matrix.project.build-tool == 'gradle'
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 17
-
-      - name: Analyze Gradle Project with SonarCloud (Cached Build)
+      - name: Analyze Gradle Project with SonarCloud
         if: matrix.project.build-tool == 'gradle'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
