@@ -70,7 +70,7 @@ jobs:
 
       # SonarCloud Analysis for Maven Projects
       - name: Build and Analyze Maven Project with SonarCloud (Full Build)
-        if: steps.maven-build-cache.outputs.cache-hit != 'true'
+        if: ${{ matrix.project.build-tool == 'maven' && steps.maven-build-cache.outputs.cache-hit != 'true' }}
         env:
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -82,7 +82,7 @@ jobs:
             -Dsonar.token=$SONAR_TOKEN
 
       - name: Analyze Maven Project with SonarCloud (Cached Build)
-        if: steps.maven-build-cache.outputs.cache-hit == 'true'
+        if: ${{ matrix.project.build-tool == 'maven' && steps.maven-build-cache.outputs.cache-hit == 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -95,7 +95,7 @@ jobs:
 
       # SonarCloud Analysis for Gradle Projects
       - name: Build and Analyze Gradle Project with SonarCloud (Full Build)
-        if: steps.gradle-build-cache.outputs.cache-hit != 'true'
+        if: ${{ matrix.project.build-tool == 'gradle' && steps.gradle-build-cache.outputs.cache-hit != 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -108,7 +108,7 @@ jobs:
             -Dsonar.token=$SONAR_TOKEN
 
       - name: Analyze Gradle Project with SonarCloud (Cached Build)
-        if: steps.gradle-build-cache.outputs.cache-hit == 'true'
+        if: ${{ matrix.project.build-tool == 'gradle' && steps.gradle-build-cache.outputs.cache-hit == 'true' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
