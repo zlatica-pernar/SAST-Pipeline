@@ -21,7 +21,7 @@ jobs:
             path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
-            java-version: 8
+            java-version: 17
             build-tool: gradle
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
@@ -71,10 +71,6 @@ jobs:
           key: build-${{ matrix.project.name }}-${{ github.sha }}
           restore-keys: build-${{ matrix.project.name }}-
 
-      - name: Debug Cache Output
-        if: matrix.project.build-tool == 'gradle'
-        run: echo "Cache Hit ${{ steps.gradle-build-cache.outputs.cache-hit }}"
-
       # SonarCloud Analysis for Maven Projects
       - name: Build and Analyze Maven Project with SonarCloud (Full Build)
         if: ${{ matrix.project.build-tool == 'maven' && steps.maven-build-cache.outputs.cache-hit != 'true' }}
@@ -108,7 +104,7 @@ jobs:
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
-          ./gradlew build sonar \
+          ./gradlew sonar \
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.host.url=https://sonarcloud.io \
