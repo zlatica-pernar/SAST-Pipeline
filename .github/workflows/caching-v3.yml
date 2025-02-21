@@ -21,7 +21,7 @@ jobs:
             path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
-            java-version: 17
+            java-version: 8
             build-tool: gradle
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
