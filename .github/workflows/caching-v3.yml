@@ -64,6 +64,10 @@ jobs:
           key: build-${{ matrix.project.name }}-${{ github.sha }}
           restore-keys: build-${{ matrix.project.name }}-
 
+      - name: Debug Cache Output
+        if: matrix.project.build-tool == 'gradle'
+        run: echo "Cache Hit ${{ steps.gradle-build-cache.outputs.cache-hit }}"
+
       # SonarCloud Analysis for Maven Projects
       - name: Build and Analyze Maven Project with SonarCloud
         if: matrix.project.build-tool == 'maven'
