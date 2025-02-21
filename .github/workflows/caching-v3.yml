@@ -34,6 +34,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Set up Java for sonarQube and VulnerableApp
+        if: matrix.project.name == 'VulnerableApp'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
       - name: Set up Java with Caching
         if: matrix.project.java-version != null
         uses: actions/setup-java@v4
