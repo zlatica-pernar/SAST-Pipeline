@@ -80,7 +80,7 @@ jobs:
             -Dsonar.organization=sast-pipeline \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=$SONAR_TOKEN \
-            -Dsonar.java.jdkHome=/usr/lib/jvm/temurin-8-jdk-amd64
+            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_Adopt_jdk/8.0.442-6/x64
 
       # SonarCloud Analysis for Non-Java Projects
       - name: Analyze Non-Java Project with SonarCloud Action
