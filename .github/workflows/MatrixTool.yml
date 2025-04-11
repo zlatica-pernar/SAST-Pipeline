@@ -41,12 +41,6 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.project.java-version }}
 
-      #- name: Set up Java for Scan
-       # if: matrix.project.name == 'VulnerableApp'
-       # uses: actions/setup-java@v2
-       # with:
-        # distribution: 'adopt'
-         #java-version: 17
 
       - name: Set up Gradle
         if: matrix.project.name == 'VulnerableApp'
@@ -75,12 +69,11 @@ jobs:
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
-          ./gradlew build sonar \
+          ./gradlew  sonar \
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=$SONAR_TOKEN \
-            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_Adopt_jdk/8.0.442-6/x64
 
       # SonarCloud Analysis for Non-Java Projects
       - name: Analyze Non-Java Project with SonarCloud Action
