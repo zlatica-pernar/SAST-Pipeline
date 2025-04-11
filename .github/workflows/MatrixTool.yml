@@ -21,7 +21,7 @@ jobs:
             path: VulnerableTestRepos/Nodegoat
           - name: VulnerableApp
             path: VulnerableTestRepos/VulnerableApp
-            java-version: 17
+            java-version: 8
             build-tool: gradle
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
@@ -34,12 +34,19 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up Java
+      - name: Set up Java for Scan
         if: matrix.project.java-version != null
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.project.java-version }}
+
+      - name: Set up Java for Scan
+        if: matrix.project.name == 'VulnerableApp'
+        uses: actions/setup-java@v2
+        with:
+         distribution: 'adopt'
+         java-version: 17
 
       - name: Set up Gradle
         if: matrix.project.name == 'VulnerableApp'
