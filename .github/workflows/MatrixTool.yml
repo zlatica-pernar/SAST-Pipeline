@@ -68,7 +68,7 @@ jobs:
         run: |
           cd ${{ matrix.project.path }}
           chmod +x ./gradlew
-          ./gradlew sonar \
+          ./gradlew build sonar \
             -Dsonar.projectKey=${{ matrix.project.name }} \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.host.url=https://sonarcloud.io \
