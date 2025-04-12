@@ -55,7 +55,7 @@ jobs:
           key: build-${{ matrix.project.name }}-${{ github.sha }}
           restore-keys: build-${{ matrix.project.name }}-
 
-      # SonarCloud Analysis for Maven Projects
+
       - name: Build and Analyze Maven Project with SonarCloud (Full Build)
         if: ${{ matrix.project.build-tool == 'maven' && steps.maven-build-cache.outputs.cache-hit != 'true' }}
         env:
@@ -102,7 +102,7 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=$SONAR_TOKEN
 
-      # SonarCloud Analysis for Non-Java Projects
+
       - name: Analyze Non-Java Project with SonarCloud Action
         if: matrix.project.build-tool == null
         uses: SonarSource/sonarqube-scan-action@master
