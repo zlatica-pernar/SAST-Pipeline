@@ -67,7 +67,7 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=$SONAR_TOKEN
 
-  sonarcloudScan5:
+  sonarcloudScan4:
     name: Juice-Shop
     runs-on: ubuntu-latest
     steps:
