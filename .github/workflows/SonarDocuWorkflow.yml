@@ -40,50 +40,9 @@ jobs:
           args: >
             -Dsonar.projectKey=Nodegoat
             -Dsonar.organization=sast-pipeline
-            -Dsonar.sources=VulnerableTestRepos/Nodegoat
+            -Dsonar.sources=VulnerableTestRepos/Nodegoat        
 
   sonarcloudScan3:
-    name: VulnerableApp
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'adopt'
-          java-version: |
-            8
-            17
-
-      - name: Build with Java 8
-        run: |
-          export JAVA_HOME=$JAVA_HOME_8_X64
-          export PATH=$JAVA_HOME/bin:$PATH
-          cd VulnerableTestRepos/VulnerableApp
-          chmod +x ./gradlew
-          ./gradlew build
-
-      - name: SonarCloud Scan
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          export JAVA_HOME=$JAVA_HOME_17_X64
-          export PATH=$JAVA_HOME/bin:$PATH
-          cd VulnerableTestRepos/VulnerableApp
-          chmod +x ./gradlew
-          ./gradlew sonar \
-            -Dsonar.projectKey=VulnerableApp \
-            -Dsonar.organization=sast-pipeline \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=$SONAR_TOKEN \
-            -Dsonar.java.source=8 \
-            -Dsonar.java.target=8
-          
-
-  sonarcloudScan4:
     name: Webgoat
     runs-on: ubuntu-latest
     steps:
