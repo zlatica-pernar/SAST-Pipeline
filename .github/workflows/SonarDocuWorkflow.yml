@@ -62,7 +62,6 @@ jobs:
         run: |
           export JAVA_HOME=$JAVA_HOME_8_X64
           export PATH=$JAVA_HOME/bin:$PATH
-          echo "Using Java version: $(java -version)"
           cd VulnerableTestRepos/VulnerableApp
           chmod +x ./gradlew
           ./gradlew build
@@ -73,7 +72,6 @@ jobs:
         run: |
           export JAVA_HOME=$JAVA_HOME_17_X64
           export PATH=$JAVA_HOME/bin:$PATH
-          echo "Using Java version: $(java -version)"
           cd VulnerableTestRepos/VulnerableApp
           chmod +x ./gradlew
           ./gradlew sonar \
