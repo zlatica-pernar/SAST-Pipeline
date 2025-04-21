@@ -78,7 +78,10 @@ jobs:
             -Dsonar.projectKey=VulnerableApp \
             -Dsonar.organization=sast-pipeline \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=$SONAR_TOKEN
+            -Dsonar.token=$SONAR_TOKEN \
+            -Dsonar.java.source=8 \
+            -Dsonar.java.target=8
+          
 
   sonarcloudScan4:
     name: Webgoat
