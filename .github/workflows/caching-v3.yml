@@ -19,10 +19,6 @@ jobs:
             path: VulnerableTestRepos/DVWA
           - name: Nodegoat
             path: VulnerableTestRepos/Nodegoat
-          - name: VulnerableApp
-            path: VulnerableTestRepos/VulnerableApp
-            java-version: 17
-            build-tool: gradle
           - name: Webgoat
             path: VulnerableTestRepos/Webgoat
             java-version: 21
@@ -42,8 +38,6 @@ jobs:
           java-version: ${{ matrix.project.java-version }}
           cache: ${{ matrix.project.build-tool }}
           cache-dependency-path: |
-            ${{ matrix.project.path }}/**/*.gradle*
-            ${{ matrix.project.path }}/**/gradle-wrapper.properties
             ${{ matrix.project.path }}/pom.xml
 
       - name: Cache Maven Build Output
@@ -79,29 +73,6 @@ jobs:
             -Dsonar.organization=sast-pipeline \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=$SONAR_TOKEN
-
-      - name: Cache Gradle Build Output
-        if: matrix.project.build-tool == 'gradle'
-        id: gradle-build-cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ matrix.project.path }}/build
-          key: build-${{ matrix.project.name }}-${{ github.sha }}
-          restore-keys: build-${{ matrix.project.name }}-
-
-      - name: Analyze Gradle Project with SonarCloud
-        if: matrix.project.build-tool == 'gradle'
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          cd ${{ matrix.project.path }}
-          chmod +x ./gradlew
-          ./gradlew sonar \
-            -Dsonar.projectKey=${{ matrix.project.name }} \
-            -Dsonar.organization=sast-pipeline \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=$SONAR_TOKEN
-
 
       - name: Analyze Non-Java Project with SonarCloud Action
         if: matrix.project.build-tool == null
