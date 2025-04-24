@@ -80,4 +80,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           with:
-              projectBaseDir=${{ matrix.project.path }}
+            projectBaseDir=${{ matrix.project.path }}
