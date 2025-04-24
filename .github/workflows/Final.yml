@@ -79,3 +79,5 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          with:
+              -Dsonar.projectBaseDir=${{ matrix.project.path }}
