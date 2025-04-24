@@ -17,14 +17,14 @@ jobs:
         project:
           - name: DVWA
             path: VulnerableTestRepos/DVWA
-          #- name: Nodegoat
-           # path: VulnerableTestRepos/Nodegoat
-          #- name: Webgoat
-          #  path: VulnerableTestRepos/Webgoat
-          #  java-version: 21
-          #  build-tool: maven
-          #- name: Juice-Shop
-          #  path: VulnerableTestRepos/Juice-Shop
+          - name: Nodegoat
+            path: VulnerableTestRepos/Nodegoat
+          - name: Webgoat
+            path: VulnerableTestRepos/Webgoat
+            java-version: 21
+            build-tool: maven
+          - name: Juice-Shop
+            path: VulnerableTestRepos/Juice-Shop
 
     steps:
       - name: Check out code
