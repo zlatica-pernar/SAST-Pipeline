@@ -79,8 +79,3 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=${{ matrix.project.name }}
-            -Dsonar.organization=sast-pipeline
-            -Dsonar.sources=${{ matrix.project.path }}
