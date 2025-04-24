@@ -80,4 +80,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           with:
-            projectBaseDir=VulnerableTestRepos/DVWA
+            args: -Dsonar.projectBaseDir=${{ matrix.project.path }}
